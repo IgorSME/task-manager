@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  task-manager:
+    container_name: task-manager
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 3hd24y8lLZt2Ym3c
+      PGDATA: /data/postgres
+    volumes:
+      - task-manager-postgres:/var/lib/postgresql/data
+    ports:
+      - 127.0.0.1:5053:5432
+    networks:
+      - task-manager
+    restart: unless-stopped
+
+  task-manager_pgadmin:
+    container_name: task-manager_pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ismelyanets@yahoo.com
+      PGADMIN_DEFAULT_PASSWORD: 3hd24y8lLZt2Ym3c
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - 127.0.0.1:5052:80
+    networks:
+      - task-manager
+    restart: unless-stopped
+
+  # redis:
+  #   container_name: cache
+  #   image: redis
+  #   ports:
+  #     - 6379:6379
+  #   volumes:
+  #     - redis:/data
+  #   networks:
+  #     - task-manager
+  #   restart: unless-stopped
+
+networks:
+  task-manager:
+    driver: bridge
+
+volumes:
+  task-manager-postgres:
+  pgadmin:
+  redis:
