@@ -146,8 +146,10 @@ export class TasksController {
   @ApiInternalServerErrorResponse({ description: 'Server error' })
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ description: 'All tasks retrieved', type: [Task] })
-  @Get()
-  async getAllTasks(): Promise<Task[]> {
-    return this.taskService.getAllTasks();
+  @Get(':taskId')
+  async getAllTasksByCategory(
+    @Param('taskId') taskId: number,
+  ): Promise<Task[]> {
+    return this.taskService.getAllTasksByCategory(taskId);
   }
 }

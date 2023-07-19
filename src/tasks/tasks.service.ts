@@ -40,8 +40,8 @@ export class TasksService {
     return deletedTask;
   }
 
-  // Get all tasks
-  async getAllTasks(): Promise<Task[]> {
-    return this.taskRepository.find();
+  // Get all tasks by category
+  async getAllTasksByCategory(taskId: number): Promise<Task[]> {
+    return this.taskRepository.find({ where: { taskId } });
   }
 }

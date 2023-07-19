@@ -47,8 +47,8 @@ export class CategoriesService {
     return deletedCategory;
   }
 
-  // Get all categories
-  async getAllCategories(): Promise<Category[]> {
-    return this.categoryRepository.find();
+  // Get all categories by userId
+  async getAllCategories(userId: number): Promise<Category[]> {
+    return this.categoryRepository.find({ where: { userId } });
   }
 }

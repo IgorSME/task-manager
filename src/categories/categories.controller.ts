@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -22,6 +23,7 @@ import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { JwtAuthGuard } from 'src/jwt-quard/jwt-auth';
 import { Category } from './categories.entity';
+import { MyRequest } from 'src/types/my-request.interface';
 
 @ApiTags('Categories')
 @Controller('api/categories')
@@ -152,7 +154,8 @@ export class CategoriesController {
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ description: 'All tasks retrieved', type: [Category] })
   @Get()
-  async getAllCategories(): Promise<Category[]> {
-    return this.categoriesService.getAllCategories();
+  async getAllCategories(@Req() req: MyRequest): Promise<Category[]> {
+    const userId = req.user.id;
+    return this.categoriesService.getAllCategories(userId);
   }
 }
