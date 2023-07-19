@@ -46,4 +46,9 @@ export class CategoriesService {
     }
     return deletedCategory;
   }
+
+  // Get all categories
+  async getAllCategories(): Promise<Category[]> {
+    return this.categoryRepository.find();
+  }
 }

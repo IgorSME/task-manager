@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Patch,
   Post,
@@ -124,5 +125,34 @@ export class CategoriesController {
   @Delete(':id')
   async deleteCategory(@Param('id') id: number) {
     return this.categoriesService.deleteCategory(id);
+  }
+
+  // Get all tasks
+  @ApiOperation({ summary: 'Get all tasks' })
+  @ApiBearerAuth()
+  @ApiHeader({
+    name: 'token-type',
+    description: 'Token type',
+    required: true,
+    schema: {
+      type: 'string',
+      format: 'token-type: access_token',
+    },
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Access token',
+    required: true,
+    schema: {
+      type: 'string',
+      format: 'Bearer YOUR_TOKEN_HERE',
+    },
+  })
+  @ApiInternalServerErrorResponse({ description: 'Server error' })
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ description: 'All tasks retrieved', type: [Category] })
+  @Get()
+  async getAllCategories(): Promise<Category[]> {
+    return this.categoriesService.getAllCategories();
   }
 }
