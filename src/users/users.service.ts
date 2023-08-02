@@ -78,7 +78,7 @@ export class UsersService {
     const payload = { email: user.email, id: user.id };
 
     const accessToken = this.jwtService.sign(payload, {
-      expiresIn: '15m',
+      expiresIn: '1h',
       secret: process.env.ACCESS_TOKEN_PRIVATE_KEY || 'SUCCESS_TOKEN',
     });
     const refreshToken = this.jwtService.sign(payload, {
@@ -104,5 +104,14 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
     return user;
+  }
+
+  // Refresh token
+  public async refreshToken(user: User) {
+    const tokens = await this.generateTokens(user);
+    return {
+      refreshToken: tokens.refreshToken,
+      accessToken: tokens.accessToken,
+    };
   }
 }

@@ -4,6 +4,7 @@ import {
   ApiHeader,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -106,5 +107,43 @@ export class UsersController {
   public async currentUser(@Req() req: MyRequest) {
     const data = await this.usersService.currentUser(req.user.email);
     return data;
+  }
+
+  // refresh-token
+  @ApiOperation({ summary: 'Refresh token' })
+  @ApiBearerAuth()
+  @ApiHeader({
+    name: 'token-type',
+    description: 'Token type',
+    required: true,
+    schema: {
+      type: 'string',
+      format: 'token-type: refresh_token',
+    },
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Refresh token',
+    required: true,
+    schema: {
+      type: 'string',
+      format: 'Bearer YOUR_TOKEN_HERE',
+    },
+  })
+  @ApiOkResponse({ description: 'Refresh token' })
+  @ApiUnauthorizedResponse({
+    description:
+      'Not authorized jwt expired || Not authorized Invalid token type',
+  })
+  @ApiNotFoundResponse({ description: 'Not found' })
+  @ApiInternalServerErrorResponse({ description: 'Server error' })
+  @UseGuards(JwtAuthGuard)
+  @Get('refresh-token')
+  async refreshToken(@Req() req: MyRequest) {
+    const data = await this.usersService.refreshToken(req.user);
+    return {
+      refreshToken: data.refreshToken,
+      accessToken: data.accessToken,
+    };
   }
 }

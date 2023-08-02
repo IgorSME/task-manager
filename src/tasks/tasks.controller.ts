@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -22,6 +23,7 @@ import { TasksService } from './tasks.service';
 import { JwtAuthGuard } from 'src/jwt-quard/jwt-auth';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Task } from './tasks.entity';
+import { validate } from 'class-validator';
 
 @ApiTags('Tasks')
 @Controller('api/tasks')
@@ -54,9 +56,16 @@ export class TasksController {
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @ApiInternalServerErrorResponse({ description: 'Server error' })
   @UseGuards(JwtAuthGuard)
-  @Post()
-  async createCategory(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
-    return this.taskService.createTask(createTaskDto);
+  @Post(':categoryId')
+  async createCategory(
+    @Body() createTaskDto: CreateTaskDto,
+    @Param('categoryId') categoryId: number,
+  ): Promise<Task> {
+    const errors = await validate(createTaskDto);
+    if (errors.length > 0) {
+      throw new BadRequestException(errors);
+    }
+    return this.taskService.createTask(createTaskDto, categoryId);
   }
 
   // Update task
@@ -146,10 +155,10 @@ export class TasksController {
   @ApiInternalServerErrorResponse({ description: 'Server error' })
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ description: 'All tasks retrieved', type: [Task] })
-  @Get(':taskId')
+  @Get('categories/:categoryId/tasks')
   async getAllTasksByCategory(
-    @Param('taskId') taskId: number,
+    @Param('categoryId') categoryId: number,
   ): Promise<Task[]> {
-    return this.taskService.getAllTasksByCategory(taskId);
+    return this.taskService.getAllTasksByCategory(categoryId);
   }
 }

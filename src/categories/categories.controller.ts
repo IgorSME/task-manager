@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -156,6 +158,9 @@ export class CategoriesController {
   @Get()
   async getAllCategories(@Req() req: MyRequest): Promise<Category[]> {
     const userId = req.user.id;
+    if (userId === undefined || userId === null) {
+      throw new HttpException('Not authorized', HttpStatus.UNAUTHORIZED);
+    }
     return this.categoriesService.getAllCategories(userId);
   }
 }
